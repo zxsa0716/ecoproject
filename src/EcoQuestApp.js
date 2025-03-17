@@ -1421,6 +1421,7 @@ const EcoQuestApp = () => {
             map: map
           });
           
+          
           // 마커 스타일 설정
           let markerImage;
           if (spot.level === 'high') {
