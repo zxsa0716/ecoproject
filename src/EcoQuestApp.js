@@ -1377,9 +1377,12 @@ const EcoQuestApp = () => {
     const [mapMode, setMapMode] = useState('hotspots'); // 'hotspots' or 'monsters'
     const [selectedHotspot, setSelectedHotspot] = useState(null);
     
+    // 카카오맵 스크립트 로드 - 환경 변수 사용
+    const kakaoMapStatus = useScript(`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_MAP_API_KEY}&libraries=services,clusterer,drawing`);
+    
     // 카카오맵 초기화
     useEffect(() => {
-      if (mapRef.current && userLocation && window.kakao && window.kakao.maps) {
+      if (mapRef.current && userLocation && kakaoMapStatus === "ready" && window.kakao && window.kakao.maps) {
         try {
           // 카카오 맵 초기화
           const options = {
@@ -1407,8 +1410,7 @@ const EcoQuestApp = () => {
           console.error("카카오맵 초기화 오류:", error);
         }
       }
-    }, [mapMode, userLocation]); // 의존성 배열에 필요한 값만 유지
-
+    }, [mapMode, userLocation, kakaoMapStatus]); // kakaoMapStatus 의존성 추가
     // 지도 마커 렌더링 함수
     const renderMapMarkers = (map, mode) => {
       // 기존 마커 제거 로직이 필요할 수 있음
@@ -1507,7 +1509,7 @@ const EcoQuestApp = () => {
         </div>
         
         <div className="relative flex-1">
-          {window.kakao && window.kakao.maps ? (
+          {kakaoMapStatus === "ready" && window.kakao && window.kakao.maps ? (
             <div ref={mapRef} className="w-full h-full"></div>
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-blue-50">
